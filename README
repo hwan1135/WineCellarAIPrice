@@ -1,0 +1,26 @@
+3. Install the Gemini packages
+From the wine-tracker folder, run:
+
+npm uninstall openai
+npm install express dotenv @google/genai
+Because the new server uses import statements, run it as an ES module:
+
+node server.mjs
+Then open:
+
+http://localhost:3000/wine-taste-notes.html
+The existing Research with AI button will open a second browser tab, submit the entered wine information to Gemini, and display the Gemini research report.
+
+Gemini’s current JavaScript examples use the @google/genai SDK and interactions.create; Google Search grounding is invoked with tools: [{ type: "google_search" }]. 
+google.dev
++14. Install and run the tool
+From the wine-tracker folder, run:
+
+npm init -y
+npm install express openai dotenv
+node server.js
+Then open this address in Chrome:
+
+http://localhost:3000/wine-taste-notes.html
+The AI research tab provides an AI-generated professional-style profile based on entered wine data and tasting notes. It should be treated as research assistance, not verified professional scoring or provenance. For authoritative ratings, pricing, or producer specifications, connect the backend to a licensed wine database or official producer/importer sources.
+

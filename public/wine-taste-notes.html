@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wine Taste Note Tracker</title>
+
+  <style>
+    :root {
+      --wine: #6b1d35;
+      --wine-dark: #421021;
+      --gold: #b88a2d;
+      --light-gold: #f8f1df;
+      --background: #f6f4f1;
+      --border: #d8d1c8;
+      --text: #2e2a27;
+      --muted: #6d625b;
+      --danger: #ad2020;
+      --success: #21663b;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--background);
+      color: var(--text);
+    }
+
+    header {
+      background: var(--wine-dark);
+      color: var(--white);
+      padding: 22px;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 25px;
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    main {
+      max-width: 1280px;
+      margin: 24px auto;
+      padding: 0 18px 40px;
+      display: grid;
+      grid-template-columns: minmax(340px, 1fr) minmax(420px, 1.4fr);
+      gap: 22px;
+    }
+
+    section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    h2 {
+      color: var(--wine-dark);
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 13px 0 5px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      font: inherit;
+      color: var(--text);
+      background: var(--white);
+    }
+
+    textarea {
+      min-height: 75px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid #d8bb77;
+      border-color: var(--gold);
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .status {
+      color: var(--success);
+      font-size: 13px;
+      font-weight: bold;
+      min-height: 18px;
+      margin-bottom: 12px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+      margin: 0 0 14px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      background: var(--wine);
+      color: var(--white);
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button.secondary {
+      background: #5e5a55;
+    }
+
+    button.gold {
+      background: var(--gold);
+    }
+
+    button.danger {
+      background: var(--danger);
+    }
+
+    .wine-card {
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--wine);
+      border-radius: 7px;
+      padding: 14px;
+      margin-bottom: 13px;
+      background: #fffdf9;
+    }
+
+    .wine-card h3 {
+      margin: 0 0 9px;
+      color: var(--wine-dark);
+      font-size: 18px;
+    }
+
+    .wine-card p {
+      margin: 8px 0;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+
+    .wine-card small {
+      display: block;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    .tag {
+      background: var(--light-gold);
+      color: #6c4b09;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-weight: bold;
+      display: inline-block;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 25px 0;
+    }
+
+    @media (max-width: 850px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Wine Taste Note Tracker</h1>
+    <p>Record wine details, tasting impressions, and request AI-assisted research in a separate tab.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2 id="formTitle">Add Wine Tasting Note</h2>
+
+      <div id="autosaveStatus" class="status">
+        Draft autosave is active.
+      </div>
+
+      <p class="hint">
+        Your draft is saved automatically in this browser. Select
+        <strong>Research with AI</strong> to open a separate tab with a professional-style wine summary.
+      </p>
+
+      <form id="wineForm">
+        <input type="hidden" id="wineId" />
+
+        <label for="producer">Producer / Winery</label>
+        <input id="producer" placeholder="Example: Ridge Vineyards" />
+
+        <label for="wineName">Wine Name / Cuvée</label>
+        <input id="wineName" required placeholder="Example: Monte Bello Cabernet Sauvignon" />
+
+        <div class="two-column">
+          <div>
+            <label for="vintage">Vintage</label>
+            <input id="vintage" type="number" min="1800" max="2100" placeholder="Example: 2019" />
+          </div>
+
+          <div>
+            <label for="rating">Your Rating</label>
+            <select id="rating">
+              <option value="">Not rated</option>
+              <option>1 / 5</option>
+              <option>2 / 5</option>
+              <option>3 / 5</option>
+              <option>4 / 5</option>
+              <option>5 / 5</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="two-column">
+          <div>
+            <label for="country">Country</label>
+            <input id="country" placeholder="Example: United States" />
+          </div>
+
+          <div>
+            <label for="region">Region / Appellation</label>
+            <input id="region" placeholder="Example: Napa Valley" />
+          </div>
+        </div>
+
+        <label for="grape">Grape / Blend</label>
+        <input id="grape" placeholder="Example: Cabernet Sauvignon, Merlot, Cabernet Franc" />
+
+        <label for="tastingDate">Tasting Date</label>
+        <input id="tastingDate" type="date" />
+
+        <label for="appearance">Appearance</label>
+        <textarea id="appearance" placeholder="Color, clarity, viscosity, bubbles, or visual observations."></textarea>
+
+        <label for="nose">Nose / Aroma</label>
+        <textarea id="nose" placeholder="Example: Black cherry, cedar, violet, cocoa, tobacco, vanilla."></textarea>
+
+        <label for="palate">Palate / Taste</label>
+        <textarea id="palate" placeholder="Flavor, acidity, tannin, sweetness, body, texture, balance."></textarea>
+
+        <label for="finish">Finish</label>
+        <textarea id="finish" placeholder="Length, aftertaste, persistence, and final flavors."></textarea>
+
+        <label for="pairing">Food Pairing Tried</label>
+        <input id="pairing" placeholder="Example: Lamb chops, mushroom risotto, aged cheese" />
+
+        <label for="notes">Overall Notes</label>
+        <textarea id="notes" placeholder="Would you buy it again? Occasion, value, cellaring thoughts, or other comments."></textarea>
+
+        <div class="buttons">
+          <button type="submit">Save Tasting Note</button>
+
+          <button type="button" class="gold" id="researchButton">
+            Research with AI
+          </button>
+
+          <button type="button" class="secondary" id="clearFormButton">
+            Clear Form
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section>
+      <h2>Saved Wine Notes</h2>
+
+      <p class="hint">
+        Export your notes as JSON for backup or transfer. Import accepts files exported from this tool.
+      </p>
+
+      <div class="buttons" style="margin-top:0; margin-bottom:16px;">
+        <button type="button" class="secondary" id="exportButton">
+          Export JSON
+        </button>
+
+        <button type="button" class="secondary" id="importButton">
+          Import JSON
+        </button>
+
+        <button type="button" class="danger" id="deleteAllButton">
+          Delete All
+        </button>
+      </div>
+
+      <input id="importFileInput" type="file" accept=".json,application/json" hidden />
+
+      <div id="wineList"></div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "wineTasteNoteTracker";
+    const DRAFT_KEY = "wineTasteNoteDraft";
+
+    const form = document.getElementById("wineForm");
+    const wineList = document.getElementById("wineList");
+    const autosaveStatus = document.getElementById("autosaveStatus");
+    const formTitle = document.getElementById("formTitle");
+    const importFileInput = document.getElementById("importFileInput");
+
+    function createId() {
+      if (window.crypto && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+
+      return "wine-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+    }
+
+    function escapeHtml(text = "") {
+      return String(text).replace(/[&<>"']/g, function(character) {
+        const map = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        };
+
+        return map[character];
+      });
+    }
+
+    function getWineNotes() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    }
+
+    function saveWineNotes(notes) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    }
+
+    function getFormData() {
+      return {
+        id: document.getElementById("wineId").value,
+        producer: document.getElementById("producer").value.trim(),
+        wineName: document.getElementById("wineName").value.trim(),
+        vintage: document.getElementById("vintage").value.trim(),
+        rating: document.getElementById("rating").value,
+        country: document.getElementById("country").value.trim(),
+        region: document.getElementById("region").value.trim(),
+        grape: document.getElementById("grape").value.trim(),
+        tastingDate: document.getElementById("tastingDate").value,
+        appearance: document.getElementById("appearance").value.trim(),
+        nose: document.getElementById("nose").value.trim(),
+        palate: document.getElementById("palate").value.trim(),
+        finish: document.getElementById("finish").value.trim(),
+        pairing: document.getElementById("pairing").value.trim(),
+        notes: document.getElementById("notes").value.trim()
+      };
+    }
+
+    function setStatus(message) {
+      autosaveStatus.textContent = message;
+    }
+
+    function saveDraft() {
+      const draft = {
+        ...getFormData(),
+        savedAt: new Date().toISOString()
+      };
+
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+
+      const time = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+
+      setStatus("Draft autosaved at " + time + ".");
+    }
+
+    function clearDraft() {
+      localStorage.removeItem(DRAFT_KEY);
+      setStatus("No unfinished draft is currently stored.");
+    }
+
+    function restoreDraft() {
+      const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+
+      if (!draft) {
+        return;
+      }
+
+      const fieldNames = [
+        "wineId",
+        "producer",
+        "wineName",
+        "vintage",
+        "rating",
+        "country",
+        "region",
+        "grape",
+        "tastingDate",
+        "appearance",
+        "nose",
+        "palate",
+        "finish",
+        "pairing",
+        "notes"
+      ];
+
+      fieldNames.forEach(function(fieldName) {
+        const element = document.getElementById(fieldName);
+
+        if (element && draft[fieldName] !== undefined) {
+          element.value = draft[fieldName];
+        }
+      });
+
+      if (draft.wineName || draft.producer || draft.nose || draft.palate) {
+        formTitle.textContent = "Recovered Unsaved Wine Note";
+        setStatus("Recovered autosaved draft.");
+      }
+    }
+
+    function resetForm() {
+      form.reset();
+      document.getElementById("wineId").value = "";
+      formTitle.textContent = "Add Wine Tasting Note";
+      clearDraft();
+    }
+
+    function renderWineNotes() {
+      const notes = getWineNotes();
+
+      if (!notes.length) {
+        wineList.innerHTML = '<p class="empty">No wine tasting notes saved yet.</p>';
+        return;
+      }
+
+      notes.sort(function(a, b) {
+        return new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt);
+      });
+
+      wineList.innerHTML = notes.map(function(wine) {
+        const title = [
+          wine.producer,
+          wine.wineName,
+          wine.vintage
+        ].filter(Boolean).join(" — ");
+
+        const savedDate = new Date(wine.updatedAt || wine.createdAt).toLocaleString();
+
+        return `
+          <article class="wine-card">
+            <h3>${escapeHtml(title || "Unnamed Wine")}</h3>
+
+            ${wine.rating ? `<span class="tag">Your Rating: ${escapeHtml(wine.rating)}</span>` : ""}
+            ${wine.region ? `<span class="tag">${escapeHtml(wine.region)}</span>` : ""}
+            ${wine.grape ? `<span class="tag">${escapeHtml(wine.grape)}</span>` : ""}
+
+            ${wine.nose ? `<p><strong>Nose:</strong> ${escapeHtml(wine.nose)}</p>` : ""}
+            ${wine.palate ? `<p><strong>Palate:</strong> ${escapeHtml(wine.palate)}</p>` : ""}
+            ${wine.finish ? `<p><strong>Finish:</strong> ${escapeHtml(wine.finish)}</p>` : ""}
+            ${wine.notes ? `<p><strong>Overall Notes:</strong> ${escapeHtml(wine.notes)}</p>` : ""}
+
+            <small>Last saved: ${savedDate}</small>
+
+            <div class="buttons">
+              <button type="button" class="gold" data-research-id="${wine.id}">
+                Research with AI
+              </button>
+
+              <button type="button" class="secondary" data-edit-id="${wine.id}">
+                Edit
+              </button>
+
+              <button type="button" class="danger" data-delete-id="${wine.id}">
+                Delete
+              </button>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      document.querySelectorAll("[data-edit-id]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          editWineNote(button.dataset.editId);
+        });
+      });
+
+      document.querySelectorAll("[data-delete-id]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          deleteWineNote(button.dataset.deleteId);
+        });
+      });
+
+      document.querySelectorAll("[data-research-id]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          const wine = getWineNotes().find(function(item) {
+            return item.id === button.dataset.researchId;
+          });
+
+          if (wine) {
+            researchWine(wine);
+          }
+        });
+      });
+    }
+
+    function editWineNote(id) {
+      const wine = getWineNotes().find(function(item) {
+        return item.id === id;
+      });
+
+      if (!wine) {
+        return;
+      }
+
+      const fieldNames = [
+        "wineId",
+        "producer",
+        "wineName",
+        "vintage",
+        "rating",
+        "country",
+        "region",
+        "grape",
+        "tastingDate",
+        "appearance",
+        "nose",
+        "palate",
+        "finish",
+        "pairing",
+        "notes"
+      ];
+
+      document.getElementById("wineId").value = wine.id;
+
+      fieldNames
+        .filter(function(fieldName) {
+          return fieldName !== "wineId";
+        })
+        .forEach(function(fieldName) {
+          const element = document.getElementById(fieldName);
+
+          if (element) {
+            element.value = wine[fieldName] || "";
+          }
+        });
+
+      formTitle.textContent = "Edit Wine Tasting Note";
+      saveDraft();
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    function deleteWineNote(id) {
+      if (!confirm("Delete this wine tasting note?")) {
+        return;
+      }
+
+      const updatedNotes = getWineNotes().filter(function(wine) {
+        return wine.id !== id;
+      });
+
+      saveWineNotes(updatedNotes);
+      renderWineNotes();
+    }
+
+    function deleteAllWineNotes() {
+      if (!confirm("Delete all saved wine tasting notes? This cannot be undone.")) {
+        return;
+      }
+
+      localStorage.removeItem(STORAGE_KEY);
+      renderWineNotes();
+    }
+
+    function exportWineNotes() {
+      const notes = getWineNotes();
+
+      if (!notes.length) {
+        alert("There are no wine notes to export.");
+        return;
+      }
+
+      const exportData = {
+        application: "Wine Taste Note Tracker",
+        exportedAt: new Date().toISOString(),
+        wineNotes: notes
+      };
+
+      const blob = new Blob(
+        [JSON.stringify(exportData, null, 2)],
+        { type: "application/json" }
+      );
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const dateStamp = new Date().toISOString().slice(0, 10);
+
+      link.href = url;
+      link.download = "wine-taste-notes-" + dateStamp + ".json";
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+    }
+
+    function normalizeImportedWine(item) {
+      if (!item || typeof item !== "object") {
+        return null;
+      }
+
+      const now = new Date().toISOString();
+
+      return {
+        id: item.id || createId(),
+        producer: String(item.producer || "").trim(),
+        wineName: String(item.wineName || "").trim(),
+        vintage: String(item.vintage || "").trim(),
+        rating: String(item.rating || "").trim(),
+        country: String(item.country || "").trim(),
+        region: String(item.region || "").trim(),
+        grape: String(item.grape || "").trim(),
+        tastingDate: String(item.tastingDate || "").trim(),
+        appearance: String(item.appearance || "").trim(),
+        nose: String(item.nose || "").trim(),
+        palate: String(item.palate || "").trim(),
+        finish: String(item.finish || "").trim(),
+        pairing: String(item.pairing || "").trim(),
+        notes: String(item.notes || "").trim(),
+        createdAt: item.createdAt || now,
+        updatedAt: item.updatedAt || item.createdAt || now
+      };
+    }
+
+    function importWineNotes(file) {
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        try {
+          const data = JSON.parse(event.target.result);
+
+          let rawNotes = [];
+
+          if (Array.isArray(data)) {
+            rawNotes = data;
+          } else if (Array.isArray(data.wineNotes)) {
+            rawNotes = data.wineNotes;
+          } else {
+            throw new Error("The selected file does not contain wine notes.");
+          }
+
+          const importedNotes = rawNotes
+            .map(normalizeImportedWine)
+            .filter(function(wine) {
+              return wine && wine.wineName;
+            });
+
+          if (!importedNotes.length) {
+            throw new Error("No valid wine notes were found in this file.");
+          }
+
+          const replaceExisting = confirm(
+            "Select OK to replace all existing wine notes.\n\n" +
+            "Select Cancel to merge imported wine notes with your existing list."
+          );
+
+          if (replaceExisting) {
+            saveWineNotes(importedNotes);
+            renderWineNotes();
+
+            alert(importedNotes.length + " wine note(s) imported.");
+            return;
+          }
+
+          const existingNotes = getWineNotes();
+          const noteMap = new Map();
+
+          existingNotes.forEach(function(wine) {
+            noteMap.set(wine.id, wine);
+          });
+
+          importedNotes.forEach(function(wine) {
+            noteMap.set(wine.id, wine);
+          });
+
+          saveWineNotes(Array.from(noteMap.values()));
+          renderWineNotes();
+
+          alert(importedNotes.length + " wine note(s) merged into your list.");
+
+        } catch (error) {
+          alert("Import failed: " + error.message);
+        }
+
+        importFileInput.value = "";
+      };
+
+      reader.readAsText(file);
+    }
+
+    async function researchWine(wine) {
+      const researchTab = window.open("", "_blank");
+
+      if (!researchTab) {
+        alert("Chrome blocked the new research tab. Allow pop-ups for this page and try again.");
+        return;
+      }
+
+      researchTab.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Wine Research</title>
+            <style>
+              body {
+                font-family: Arial, Helvetica, sans-serif;
+                margin: 0;
+                padding: 30px;
+                background: #f6f4f1;
+                color: #2e2a27;
+              }
+
+              main {
+                max-width: 900px;
+                margin: auto;
+                background: white;
+                border: 1px solid #d8d1c8;
+                border-radius: 10px;
+                padding: 25px;
+              }
+
+              h1 {
+                color: #421021;
+                margin-top: 0;
+              }
+
+              pre {
+                white-space: pre-wrap;
+                font-family: Arial, Helvetica, sans-serif;
+                line-height: 1.55;
+              }
+
+              .loading {
+                color: #6d625b;
+              }
+
+              .error {
+                color: #ad2020;
+                font-weight: bold;
+              }
+            </style>
+          </head>
+          <body>
+            <main>
+              <h1>Wine Research</h1>
+              <p class="loading">Contacting the AI research service...</p>
+            </main>
+          </body>
+        </html>
+      `);
+
+      researchTab.document.close();
+
+      try {
+        const response = await fetch("/api/wine-research", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(wine)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || "Unable to retrieve research.");
+        }
+
+        const report = data.report || "No research report was returned.";
+
+        researchTab.document.body.innerHTML = `
+          <main>
+            <h1>Wine Research</h1>
+            <pre id="wineResearchReport"></pre>
+          </main>
+        `;
+
+        researchTab.document.getElementById("wineResearchReport").textContent = report;
+
+      } catch (error) {
+        researchTab.document.body.innerHTML = `
+          <main>
+            <h1>Wine Research</h1>
+            <p class="error">Research request failed.</p>
+            <p>${escapeHtml(error.message)}</p>
+            <p>
+              Confirm that the local server is running and that the AI API configuration is valid.
+            </p>
+          </main>
+        `;
+      }
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const wine = getFormData();
+      const wineNotes = getWineNotes();
+      const now = new Date().toISOString();
+
+      const existingIndex = wineNotes.findIndex(function(item) {
+        return item.id === wine.id;
+      });
+
+      if (existingIndex >= 0) {
+        wineNotes[existingIndex] = {
+          ...wineNotes[existingIndex],
+          ...wine,
+          updatedAt: now
+        };
+      } else {
+        wineNotes.push({
+          ...wine,
+          id: createId(),
+          createdAt: now,
+          updatedAt: now
+        });
+      }
+
+      saveWineNotes(wineNotes);
+      resetForm();
+      renderWineNotes();
+
+      setStatus("Wine tasting note saved successfully.");
+    });
+
+    document.querySelectorAll(
+      "#wineForm input, #wineForm textarea, #wineForm select"
+    ).forEach(function(field) {
+      field.addEventListener("input", saveDraft);
+      field.addEventListener("change", saveDraft);
+    });
+
+    document.addEventListener("visibilitychange", function() {
+      if (document.visibilityState === "hidden") {
+        saveDraft();
+      }
+    });
+
+    document.getElementById("researchButton").addEventListener("click", function() {
+      const wine = getFormData();
+
+      if (!wine.wineName) {
+        alert("Enter at least the wine name before requesting AI research.");
+        return;
+      }
+
+      researchWine(wine);
+    });
+
+    document.getElementById("clearFormButton").addEventListener("click", function() {
+      if (confirm("Clear this form and remove the autosaved draft?")) {
+        resetForm();
+      }
+    });
+
+    document.getElementById("exportButton").addEventListener("click", exportWineNotes);
+
+    document.getElementById("importButton").addEventListener("click", function() {
+      importFileInput.click();
+    });
+
+    importFileInput.addEventListener("change", function() {
+      const file = importFileInput.files[0];
+
+      if (file) {
+        importWineNotes(file);
+      }
+    });
+
+    document.getElementById("deleteAllButton").addEventListener("click", deleteAllWineNotes);
+
+    restoreDraft();
+    renderWineNotes();
+  </script>
+</body>
+</html>
