@@ -1,0 +1,141 @@
+:root {
+  --bg: #111214;
+  --panel: #1a1c20;
+  --border: #2b2e36;
+  --text: #f5f7fa;
+  --muted: #a4adba;
+  --accent: #7e203e;
+  --accent-2: #a02d52;
+  --rack: #4e3729;
+  --rack2: #664632;
+  --wineCard: #efefef;
+  --wineText: #1c1c1f;
+  --success: #78d49a;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.hero h1 {
+  margin-bottom: 4px;
+}
+
+.hero p {
+  color: var(--muted);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+input, select, button {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #101215;
+  color: var(--text);
+}
+
+button {
+  background: var(--accent);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+button:hover {
+  background: var(--accent-2);
+}
+
+.cellar-card {
+  background: #15171a;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.cellar-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.rack {
+  background: linear-gradient(180deg, var(--rack2), var(--rack));
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.rack-title {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.bottle-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.bottle-card {
+  background: var(--wineCard);
+  color: var(--wineText);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.bottle-name {
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.meta {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.ai-box {
+  margin-top: 10px;
+  padding: 10px;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #d8d8dd;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.success {
+  color: var(--success);
+  margin-top: 10px;
+}

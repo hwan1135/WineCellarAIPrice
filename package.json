@@ -1,0 +1,13 @@
+{
+  "name": "wine-cellar-electron",
+  "version": "1.0.0",
+  "description": "Windows desktop wine cellar app with Gemini AI enrichment",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "electron": "^33.2.1"
+  }
+}

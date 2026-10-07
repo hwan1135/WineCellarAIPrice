@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wine Cellar Desktop</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <h1>Wine Cellar Desktop</h1>
+      <p>Track bottles, stock, tasting notes, and AI-estimated price.</p>
+    </header>
+
+    <section class="panel">
+      <h2>Create Cellar</h2>
+      <div class="grid">
+        <input id="cellarName" placeholder="Cellar name" />
+        <input id="rackCount" type="number" min="1" value="6" placeholder="Rack count" />
+        <button id="createCellarBtn">Create Cellar</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Add Bottle</h2>
+      <div class="grid">
+        <select id="cellarSelect"></select>
+        <select id="rackSelect"></select>
+        <input id="wineName" placeholder="Wine name" />
+        <input id="producer" placeholder="Producer" />
+        <input id="origin" placeholder="Origin" />
+        <input id="vintage" placeholder="Vintage" />
+        <input id="wineType" placeholder="Type of wine" />
+        <input id="quantity" type="number" min="1" value="1" placeholder="Quantity" />
+        <button id="addBottleBtn">Add Bottle</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Search Bottles</h2>
+      <div class="grid">
+        <input id="searchInput" placeholder="Search by name, producer, origin, vintage, type" />
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Cellars</h2>
+      <div id="cellarsContainer"></div>
+    </section>
+  </div>
+
+  <script src="./renderer.js"></script>
+</body>
+</html>
